@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aary — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111116;
+    --border: #1e1e28;
+    --accent: #e8ff47;
+    --accent2: #47c8ff;
+    --text: #e8e8f0;
+    --muted: #555568;
+    --subtle: #1a1a24;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.25s ease;
+    mix-blend-mode: difference;
+    opacity: 0.6;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.028;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Grid lines background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,255,71,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,255,71,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(12px);
+    background: rgba(10,10,12,0.7);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  .hero-tag span {
+    display: inline-block;
+    background: rgba(232,255,71,0.08);
+    border: 1px solid rgba(232,255,71,0.2);
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-size: clamp(56px, 8vw, 120px);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+
+  h1 .line2 {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(232,255,71,0.5);
+    display: block;
+  }
+
+  h1 .accent-word {
+    color: var(--accent);
+  }
+
+  .hero-desc {
+    max-width: 520px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.6s forwards;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0a0c;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  /* floating decoration */
+  .hero-deco {
+    position: absolute;
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    animation: fadeIn 1.2s ease 1s forwards;
+  }
+
+  .deco-ring {
+    width: 320px; height: 320px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    position: relative;
+    animation: spin 18s linear infinite;
+  }
+
+  .deco-ring::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 50%;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+
+  .deco-ring-inner {
+    width: 200px; height: 200px;
+    border: 1px solid rgba(71,200,255,0.2);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 10s linear infinite reverse;
+  }
+
+  .deco-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    text-align: center;
+    white-space: nowrap;
+    line-height: 2;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.5s forwards;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--muted), transparent);
+    animation: scrollPulse 1.5s ease infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* SECTIONS common */
+  section {
+    padding: 120px 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  .section-title {
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 64px;
+  }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ABOUT */
+  #about {
+    border-top: 1px solid var(--border);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .about-text p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    align-self: start;
+  }
+
+  .stat-box {
+    background: var(--surface);
+    padding: 28px 24px;
+    transition: background 0.2s;
+  }
+
+  .stat-box:hover { background: var(--subtle); }
+
+  .stat-num {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* SKILLS */
+  #skills { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .skill-card {
+    background: var(--bg);
+    padding: 36px 32px;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-card:hover { background: var(--subtle); }
+
+  .skill-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .skill-name {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .skill-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--border);
+    padding: 4px 10px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .skill-tag:hover {
+    color: var(--accent);
+    background: rgba(232,255,71,0.06);
+  }
+
+  /* PROJECTS */
+  #projects { border-top: 1px solid var(--border); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .project-card {
+    background: var(--surface);
+    padding: 44px 40px;
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card.featured {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .project-card:hover { background: var(--subtle); }
+
+  .project-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    margin-bottom: 20px;
+  }
+
+  .project-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+    transition: color 0.2s;
+  }
+
+  .project-card:hover .project-title { color: var(--accent); }
+
+  .project-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .project-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    background: rgba(71,200,255,0.07);
+    border: 1px solid rgba(71,200,255,0.15);
+    padding: 4px 10px;
+    letter-spacing: 0.06em;
+  }
+
+  /* project visual placeholder */
+  .project-visual {
+    height: 220px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-visual svg {
+    opacity: 0.6;
+  }
+
+  /* circuit animation in featured */
+  .circuit-line {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: drawLine 2s ease 0.5s forwards;
+  }
+
+  @keyframes drawLine {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* EXPERIENCE */
+  #experience { background: var(--surface); border-top: 1px solid var(--border); }
+
+  .exp-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); }
+
+  .exp-item {
+    background: var(--bg);
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 40px;
+    align-items: start;
+    transition: background 0.2s;
+  }
+
+  .exp-item:hover { background: var(--subtle); }
+
+  .exp-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    padding-top: 4px;
+  }
+
+  .exp-role {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .exp-org {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    letter-spacing: 0.06em;
+  }
+
+  .exp-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .exp-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    background: rgba(232,255,71,0.07);
+    border: 1px solid rgba(232,255,71,0.2);
+    padding: 4px 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    align-self: start;
+  }
+
+  /* CONTACT */
+  #contact { border-top: 1px solid var(--border); }
+
+  .contact-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .contact-inner .section-label { justify-content: center; }
+  .contact-inner .section-label::after { display: none; }
+
+  .contact-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .contact-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 28px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .contact-link:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1;
+    position: relative;
+  }
+
+  footer span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    section { padding: 80px 24px; }
+    #hero { padding: 0 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 12px; }
+    .hero-deco { display: none; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">aary.dev</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-tag"><span>// available for internships · Lexington, KY</span></div>
+    <h1>
+      Building at the<br>
+      <span class="line2">intersection of</span>
+      <span class="accent-word">hardware</span><br>
+      <span class="line2">&amp; software.</span>
+    </h1>
+    <p class="hero-desc">
+      Computer Engineering student at the University of Kentucky.<br>
+      I design digital systems, write embedded code, and build things<br>
+      that bridge the physical and digital worlds.
+    </p>
+    <div class="hero-ctas">
+      <a href="#projects" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-ghost">Get In Touch →</a>
+    </div>
+  </div>
+
+  <div class="hero-deco">
+    <div class="deco-ring">
+      <div class="deco-ring-inner"></div>
+      <div class="deco-center">
+        CPE 282<br>
+        Digital Logic<br>
+        <span style="color:var(--accent)">◆</span><br>
+        Verilog · FPGA
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-label">01 — About</div>
+    <div class="about-grid">
+      <div class="about-text">
+        <h2 class="section-title reveal">Engineer.<br>Tinkerer.<br>Problem Solver.</h2>
+        <p class="reveal">I'm a <strong>Computer Engineering student</strong> at the University of Kentucky with a passion for working at every layer of the stack — from RTL design in Verilog on FPGAs to system administration on bare-metal Linux machines.</p>
+        <p class="reveal">My work spans <strong>digital logic design</strong>, embedded hardware prototyping with Arduino, and software development in C++ and Java. I'm drawn to projects where hardware and software meet in interesting ways.</p>
+        <p class="reveal">Outside of coursework, I run a <strong>home lab environment</strong> for Active Directory and networking experiments, and I'm actively working toward CompTIA and Microsoft Azure certifications to build depth in enterprise IT and cloud infrastructure.</p>
+      </div>
+
+      <div class="stats-grid reveal">
+        <div class="stat-box">
+          <div class="stat-num">UK</div>
+          <div class="stat-label">University of Kentucky</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">CPE</div>
+          <div class="stat-label">Computer Engineering</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Languages & Tools</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Curiosity & Drive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-label">02 — Skills</div>
+    <h2 class="section-title reveal">What I<br>work with.</h2>
+
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">Hardware & Digital Design</div>
+        <div class="skill-items">
+          <span class="skill-tag">Verilog</span>
+          <span class="skill-tag">FPGA / Vivado</span>
+          <span class="skill-tag">Logic Design</span>
+          <span class="skill-tag">FSM</span>
+          <span class="skill-tag">K-maps</span>
+          <span class="skill-tag">Flip-flops</span>
+          <span class="skill-tag">Arduino</span>
+          <span class="skill-tag">Onshape</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">💻</div>
+        <div class="skill-name">Software Development</div>
+        <div class="skill-items">
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">MATLAB</span>
+          <span class="skill-tag">Data Structures</span>
+          <span class="skill-tag">OOP</span>
+          <span class="skill-tag">Algorithms</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🐧</div>
+        <div class="skill-name">Systems & Infrastructure</div>
+        <div class="skill-items">
+          <span class="skill-tag">Linux (Mint / Ubuntu)</span>
+          <span class="skill-tag">Dual-boot / NVMe</span>
+          <span class="skill-tag">Active Directory</span>
+          <span class="skill-tag">Bash</span>
+          <span class="skill-tag">Networking</span>
+          <span class="skill-tag">Windows Server</span>
+          <span class="skill-tag">Home Lab</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">☁️</div>
+        <div class="skill-name">Cloud & Certifications</div>
+        <div class="skill-items">
+          <span class="skill-tag">Microsoft Azure (in progress)</span>
+          <span class="skill-tag">CompTIA (in progress)</span>
+          <span class="skill-tag">Git & Version Control</span>
+          <span class="skill-tag">VS Code</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🔢</div>
+        <div class="skill-name">Engineering Fundamentals</div>
+        <div class="skill-items">
+          <span class="skill-tag">Calculus I / II</span>
+          <span class="skill-tag">Discrete Math</span>
+          <span class="skill-tag">Boolean Algebra</span>
+          <span class="skill-tag">Circuit Analysis</span>
+          <span class="skill-tag">Signal Timing</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🤝</div>
+        <div class="skill-name">Soft Skills</div>
+        <div class="skill-items">
+          <span class="skill-tag">Fast Learner</span>
+          <span class="skill-tag">Documentation</span>
+          <span class="skill-tag">Debugging Mindset</span>
+          <span class="skill-tag">Self-directed</span>
+          <span class="skill-tag">Collaborative</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-label">03 — Projects</div>
+    <h2 class="section-title reveal">Things I've<br>built.</h2>
+
+    <div class="projects-grid">
+
+      <!-- Featured project -->
+      <div class="project-card featured reveal">
+        <div>
+          <div class="project-num">001 — Featured</div>
+          <div class="project-title">FPGA Digital Logic Lab Suite</div>
+          <p class="project-desc">Designed and simulated a series of digital circuits on an FPGA using Verilog HDL. Work includes synchronous counters, JK flip-flop behavioral models, 7-segment decoders, LFSR sequences, SR/D latches, ring oscillators, and static hazard analysis. Verified all designs using Vivado waveform simulation.</p>
+          <div class="project-tags">
+            <span class="project-tag">Verilog</span>
+            <span class="project-tag">FPGA</span>
+            <span class="project-tag">Vivado</span>
+            <span class="project-tag">Digital Logic</span>
+            <span class="project-tag">RTL Design</span>
+          </div>
+        </div>
+        <div class="project-visual">
+          <svg width="240" height="160" viewBox="0 0 240 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Clock signal -->
+            <polyline class="circuit-line" points="10,50 30,50 30,30 60,30 60,50 90,50 90,30 120,30 120,50 150,50 150,30 180,30 180,50 210,50" stroke="#e8ff47" stroke-width="1.5" fill="none"/>
+            <!-- Q output -->
+            <polyline class="circuit-line" points="10,100 50,100 50,80 110,80 110,100 170,100 170,80 210,80" stroke="#47c8ff" stroke-width="1.5" fill="none" style="animation-delay:0.5s"/>
+            <!-- Labels -->
+            <text x="4" y="53" font-family="monospace" font-size="8" fill="#555568">CLK</text>
+            <text x="4" y="103" font-family="monospace" font-size="8" fill="#555568">Q</text>
+            <!-- Dots -->
+            <circle cx="30" cy="30" r="3" fill="#e8ff47"/>
+            <circle cx="90" cy="30" r="3" fill="#e8ff47"/>
+            <circle cx="150" cy="30" r="3" fill="#e8ff47"/>
+            <circle cx="50" cy="80" r="3" fill="#47c8ff"/>
+            <circle cx="110" cy="80" r="3" fill="#47c8ff"/>
+            <circle cx="170" cy="80" r="3" fill="#47c8ff"/>
+            <text x="80" y="150" font-family="monospace" font-size="8" fill="#555568" text-anchor="middle">JK flip-flop waveform</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">002</div>
+        <div class="project-title">Arduino Oscilloscope</div>
+        <p class="project-desc">Built a basic digital oscilloscope using an Arduino microcontroller to sample and display analog signals. Explored ADC sampling rates, signal reconstruction, and real-time serial visualization.</p>
+        <div class="project-tags">
+          <span class="project-tag">Arduino</span>
+          <span class="project-tag">Embedded C++</span>
+          <span class="project-tag">ADC / Signals</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">003</div>
+        <div class="project-title">Home Lab — Active Directory</div>
+        <p class="project-desc">Configured a self-hosted enterprise-grade lab environment running Windows Server with Active Directory, DNS, and DHCP on repurposed hardware. Used to practice sysadmin workflows and prepare for CompTIA / Azure certs.</p>
+        <div class="project-tags">
+          <span class="project-tag">Windows Server</span>
+          <span class="project-tag">Active Directory</span>
+          <span class="project-tag">Networking</span>
+          <span class="project-tag">Linux</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-num">004</div>
+        <div class="project-title">C++ Data Structures Library</div>
+        <p class="project-desc">Implemented core data structures (arrays, vectors, linked structures) and algorithms from scratch in C++. Practiced memory management, pass-by-reference, streams, and object-oriented design patterns.</p>
+        <div class="project-tags">
+          <span class="project-tag">C++</span>
+          <span class="project-tag">OOP</span>
+          <span class="project-tag">Data Structures</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-label">04 — Experience & Education</div>
+    <h2 class="section-title reveal">Where I've<br>been.</h2>
+
+    <div class="exp-list">
+
+      <div class="exp-item reveal">
+        <div class="exp-period">2023 — Present</div>
+        <div>
+          <div class="exp-role">B.S. Computer Engineering</div>
+          <div class="exp-org">University of Kentucky · Lexington, KY</div>
+          <div class="exp-detail">Coursework: Digital Logic Design (CPE 282), Calculus I, Discrete Math, C++ Programming.<br>Focus on hardware-software co-design, FPGA programming, and embedded systems.</div>
+        </div>
+        <div class="exp-badge">Current</div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-period">Ongoing</div>
+        <div>
+          <div class="exp-role">Independent Study — Systems & Cloud</div>
+          <div class="exp-org">Self-directed · Home Lab</div>
+          <div class="exp-detail">Building and operating a home lab with bare-metal Linux (Linux Mint 22.3) and Windows Server for Active Directory. Pursuing CompTIA and Microsoft Azure certifications. Exploring GovDeals/enterprise hardware for lab expansion.</div>
+        </div>
+        <div class="exp-badge">Active</div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-period">2023</div>
+        <div>
+          <div class="exp-role">Hardware Prototyping Projects</div>
+          <div class="exp-org">Personal · Arduino / FPGA</div>
+          <div class="exp-detail">Designed oscilloscope hardware with Arduino. Explored feasibility of drone control systems. Lab work on timing phenomena: static hazards, ring oscillators, and SR latches.</div>
+        </div>
+        <div class="exp-badge">Project</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="contact-inner">
+      <div class="section-label">05 — Contact</div>
+      <h2 class="section-title reveal">Let's build<br>something.</h2>
+      <p class="contact-sub reveal">
+        I'm currently looking for internship opportunities where I can contribute across hardware, embedded systems, or software. If you're building something exciting — let's talk.
+      </p>
+      <div class="contact-links reveal">
+        <a href="mailto:your@email.com" class="contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Email Me
+        </a>
+        <a href="https://github.com/yourusername" class="contact-link" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="https://linkedin.com/in/yourprofile" class="contact-link" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Aary — All rights reserved</span>
+  <span>Computer Engineering · University of Kentucky</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 5 + 'px';
+    cursor.style.top = my - 5 + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx - 18 + 'px';
+    ring.style.top = ry - 18 + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'scale(2.5)';
+      ring.style.transform = 'scale(1.4)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'scale(1)';
+      ring.style.transform = 'scale(1)';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
