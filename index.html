@@ -3,8 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aary — Portfolio</title>
+<title>Aary Patel — Computer Engineering Portfolio</title>
+<meta name="description" content="Aary Patel, Computer Engineering student at the University of Kentucky: FPGA/Verilog design, embedded prototyping, and a self-hosted DevOps home lab.">
+<link rel="canonical" href="https://aary25.github.io/">
+<meta name="theme-color" content="#07081c">
+<meta name="color-scheme" content="dark">
+
+<!-- Link previews -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aary25.github.io/">
+<meta property="og:title" content="Aary Patel — Computer Engineering Portfolio">
+<meta property="og:description" content="Computer Engineering student at the University of Kentucky: FPGA/Verilog design, embedded prototyping, and a self-hosted DevOps home lab.">
+<meta property="og:image" content="https://aary25.github.io/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Aary Patel: building at the intersection of hardware and software.">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Aary Patel",
+  "url": "https://aary25.github.io/",
+  "affiliation": { "@type": "CollegeOrUniversity", "name": "University of Kentucky" },
+  "sameAs": ["https://github.com/aary25", "https://www.linkedin.com/in/aarypatel25"]
+}
+</script>
+<script>document.documentElement.classList.add('js');</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -12,9 +45,10 @@
     --surface: #0d1030;
     --border: #1b2144;
     --accent: #00b4d8;
-    --accent2: #0077b6;
+    --accent2: #008cd6;
     --text: #e9f3f7;
-    --muted: #5c6c96;
+    --text-dim: #a0a8c0;
+    --muted: #8592b5;
     --subtle: #141a3a;
   }
 
@@ -27,10 +61,13 @@
     color: var(--text);
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
-    cursor: none;
   }
 
-  /* Custom cursor */
+  /* Custom cursor (mouse/trackpad only: the script adds .has-cursor) */
+  .cursor, .cursor-ring { display: none; }
+  .has-cursor .cursor, .has-cursor .cursor-ring { display: block; }
+  .has-cursor, .has-cursor * { cursor: none; }
+
   .cursor {
     position: fixed;
     width: 10px; height: 10px;
@@ -38,8 +75,9 @@
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
-    transition: transform 0.15s ease;
+    transition: transform 0.15s ease, opacity 0.2s ease;
     mix-blend-mode: difference;
+    opacity: 0;
   }
   .cursor-ring {
     position: fixed;
@@ -50,8 +88,10 @@
     z-index: 9998;
     transition: all 0.25s ease;
     mix-blend-mode: difference;
-    opacity: 0.6;
+    opacity: 0;
   }
+  .cursor-visible .cursor { opacity: 1; }
+  .cursor-visible .cursor-ring { opacity: 0.6; }
 
   /* Noise texture overlay */
   body::before {
@@ -96,6 +136,19 @@
     font-size: 13px;
     color: var(--accent);
     letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+
+  .nav-toggle {
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 8px 14px;
   }
 
   .nav-links {
@@ -119,9 +172,10 @@
   /* HERO */
   #hero {
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
-    padding: 0 48px;
+    padding: 96px 48px 120px;
     position: relative;
     z-index: 1;
   }
@@ -152,7 +206,7 @@
   }
 
   h1 {
-    font-size: clamp(56px, 8vw, 120px);
+    font-size: clamp(44px, 6vw + 22px, 120px);
     font-weight: 900;
     line-height: 0.92;
     letter-spacing: -0.03em;
@@ -174,16 +228,22 @@
   .hero-desc {
     max-width: 520px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.8;
-    color: #a0a8c0;
+    color: var(--text-dim);
     margin-bottom: 48px;
     opacity: 0;
     animation: fadeUp 0.7s ease 0.6s forwards;
   }
 
+  .hero-desc strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
   .hero-ctas {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     align-items: center;
     opacity: 0;
@@ -206,6 +266,25 @@
 
   .btn-primary:hover {
     background: #fff;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 31px;
+    border: 1px solid var(--accent);
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .btn-outline:hover {
+    background: rgba(0,180,216,0.1);
     transform: translateY(-2px);
   }
 
@@ -362,9 +441,9 @@
 
   .about-text p {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.9;
-    color: var(--muted);
+    color: var(--text-dim);
     margin-bottom: 20px;
   }
 
@@ -412,7 +491,7 @@
 
   .skills-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
@@ -439,11 +518,6 @@
 
   .skill-card:hover::before { transform: scaleX(1); }
   .skill-card:hover { background: var(--subtle); }
-
-  .skill-icon {
-    font-size: 24px;
-    margin-bottom: 16px;
-  }
 
   .skill-name {
     font-size: 16px;
@@ -522,9 +596,9 @@
 
   .project-desc {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.8;
-    color: var(--muted);
+    color: var(--text-dim);
     margin-bottom: 24px;
   }
 
@@ -544,9 +618,12 @@
     letter-spacing: 0.06em;
   }
 
-  /* project visual placeholder */
+  .project-links { margin-top: 28px; }
+
+  /* project visual */
   .project-visual {
     height: 220px;
+    padding: 16px;
     background: var(--bg);
     border: 1px solid var(--border);
     display: flex;
@@ -557,15 +634,17 @@
   }
 
   .project-visual svg {
-    opacity: 0.6;
+    opacity: 0.9;
   }
 
-  /* circuit animation in featured */
+  /* circuit animation in featured (shapes set pathLength="200"; draws once the card scrolls into view) */
   .circuit-line {
     stroke-dasharray: 200;
     stroke-dashoffset: 200;
     animation: drawLine 2s ease 0.5s forwards;
   }
+
+  .js .project-card:not(.visible) .circuit-line { animation-play-state: paused; }
 
   @keyframes drawLine {
     to { stroke-dashoffset: 0; }
@@ -613,14 +692,14 @@
 
   .exp-detail {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 14px;
+    color: var(--text-dim);
     line-height: 1.7;
   }
 
   .exp-badge {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
+    font-size: 10px;
     color: var(--accent);
     background: rgba(0,180,216,0.07);
     border: 1px solid rgba(0,180,216,0.2);
@@ -645,9 +724,9 @@
 
   .contact-sub {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.8;
-    color: var(--muted);
+    color: var(--text-dim);
     margin-bottom: 48px;
   }
 
@@ -711,14 +790,19 @@
   }
 
   .reveal {
-    opacity: 0;
-    transform: translateY(30px);
     transition: opacity 0.7s ease, transform 0.7s ease;
   }
 
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
+  /* hidden only while JS is running, so the page still reads without it */
+  .js .reveal:not(.visible) {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  /* FOCUS */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
   }
 
   /* SCROLLBAR */
@@ -730,28 +814,56 @@
   @media (max-width: 900px) {
     nav { padding: 16px 24px; }
     section { padding: 80px 24px; }
-    #hero { padding: 0 24px; }
+    #hero { padding: 88px 24px 112px; }
     .about-grid { grid-template-columns: 1fr; gap: 48px; }
     .skills-grid { grid-template-columns: 1fr; }
+    .skill-card { padding: 28px 24px; }
     .projects-grid { grid-template-columns: 1fr; }
-    .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
-    .exp-item { grid-template-columns: 1fr; gap: 12px; }
+    .project-card { padding: 36px 24px; }
+    .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; gap: 32px; }
+    .exp-item { grid-template-columns: 1fr; gap: 12px; padding: 28px 24px; }
     .hero-deco { display: none; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
-    .nav-links { display: none; }
+
+    /* mobile menu */
+    .nav-toggle { display: block; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      flex-direction: column;
+      gap: 0;
+      padding: 8px 24px 16px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { display: block; padding: 15px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
+    }
   }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
 <!-- NAV -->
 <nav>
-  <span class="nav-logo">Aary</span>
-  <ul class="nav-links">
+  <a href="#hero" class="nav-logo">Aary Patel</a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+  <ul class="nav-links" id="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#projects">Projects</a></li>
@@ -759,6 +871,8 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
+
+<main>
 
 <!-- HERO -->
 <section id="hero">
@@ -771,18 +885,18 @@
       <span class="line2">&amp; software.</span>
     </h1>
     <p class="hero-desc">
-      Computer Engineering student at the University of Kentucky.<br>
-      I design digital systems, write embedded code, and build things<br>
+      I'm <strong>Aary Patel</strong>, a Computer Engineering student at the University of Kentucky.
+      I design digital systems, write embedded code, and build things
       that work with the physical and digital environments.
     </p>
     <div class="hero-ctas">
-    <a href="#projects" class="btn-primary">View My Work</a>
-    <a href="https://photos.app.goo.gl/oRfwHP7K7PuL2ARn8" target="_blank" class="btn-primary">View Photo Portfolio</a>
-    <a href="#contact" class="btn-ghost">Get In Touch →</a>
+      <a href="#projects" class="btn-primary">View My Work</a>
+      <a href="https://photos.app.goo.gl/oRfwHP7K7PuL2ARn8" target="_blank" rel="noopener" class="btn-outline">View Photo Portfolio</a>
+      <a href="#contact" class="btn-ghost">Get In Touch →</a>
     </div>
   </div>
 
-  <div class="hero-deco">
+  <div class="hero-deco" aria-hidden="true">
     <div class="deco-ring">
       <div class="deco-ring-inner"></div>
       <div class="deco-center">
@@ -793,7 +907,7 @@
     </div>
   </div>
 
-  <div class="scroll-hint">Scroll</div>
+  <div class="scroll-hint" aria-hidden="true">Scroll</div>
 </section>
 
 <!-- ABOUT -->
@@ -805,7 +919,7 @@
         <h2 class="section-title reveal">Engineer.<br>Tinkerer.<br>Problem Solver.</h2>
         <p class="reveal">I'm a <strong>Computer Engineering student</strong> at the University of Kentucky with a passion for working at every layer of the stack — from RTL design in Verilog on FPGAs to system administration on bare-metal Linux machines.</p>
         <p class="reveal">My work spans <strong>digital logic design</strong>, embedded hardware prototyping with Arduino, and software development in C++ and Java. I'm drawn to projects where hardware and software meet in interesting ways.</p>
-        <p class="reveal">Outside of coursework, I run a <strong>home lab environment</strong> for Active Directory and networking experiments.</p>
+        <p class="reveal">Outside of coursework, I run a <strong>self-hosted home lab</strong> on Proxmox, with Docker services, CI/CD pipelines, and Prometheus + Grafana monitoring.</p>
       </div>
 
       <div class="stats-grid reveal">
@@ -818,12 +932,12 @@
           <div class="stat-label">Computer Engineering</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num">5+</div>
-          <div class="stat-label">Languages & Tools</div>
+          <div class="stat-num">6</div>
+          <div class="stat-label">Languages</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num">∞</div>
-          <div class="stat-label">Curiosity & Drive</div>
+          <div class="stat-num">9</div>
+          <div class="stat-label">Self-hosted services</div>
         </div>
       </div>
     </div>
@@ -838,8 +952,7 @@
 
     <div class="skills-grid">
       <div class="skill-card reveal">
-        <div class="skill-icon"></div>
-        <div class="skill-name">Hardware & Digital Design</div>
+        <h3 class="skill-name">Hardware & Digital Design</h3>
         <div class="skill-items">
           <span class="skill-tag">Verilog</span>
           <span class="skill-tag">FPGA / Vivado</span>
@@ -851,8 +964,7 @@
       </div>
 
       <div class="skill-card reveal">
-        <div class="skill-icon"></div>
-        <div class="skill-name">Software Development</div>
+        <h3 class="skill-name">Software Development</h3>
         <div class="skill-items">
           <span class="skill-tag">C++</span>
           <span class="skill-tag">Java</span>
@@ -865,22 +977,23 @@
       </div>
 
       <div class="skill-card reveal">
-        <div class="skill-icon"></div>
-        <div class="skill-name">Systems & Infrastructure</div>
+        <h3 class="skill-name">Systems & Infrastructure</h3>
         <div class="skill-items">
-          <span class="skill-tag">Linux (Mint / Ubuntu)</span>
-          <span class="skill-tag">Dual-boot / NVMe</span>
-          <span class="skill-tag">Active Directory</span>
+          <span class="skill-tag">Linux (Debian / Ubuntu / Mint)</span>
+          <span class="skill-tag">Proxmox VE</span>
+          <span class="skill-tag">Docker</span>
           <span class="skill-tag">Bash</span>
           <span class="skill-tag">Networking</span>
+          <span class="skill-tag">Tailscale / WireGuard</span>
+          <span class="skill-tag">Prometheus / Grafana</span>
+          <span class="skill-tag">CI/CD</span>
           <span class="skill-tag">Windows Server</span>
-          <span class="skill-tag">Home Lab</span>
+          <span class="skill-tag">Active Directory</span>
         </div>
       </div>
 
       <div class="skill-card reveal">
-        <div class="skill-icon"></div>
-        <div class="skill-name">Cloud & Certifications</div>
+        <h3 class="skill-name">Tools & Certifications</h3>
         <div class="skill-items">
           <span class="skill-tag">True Lean Certified</span>
           <span class="skill-tag">CompTIA (in progress)</span>
@@ -904,52 +1017,68 @@
       <div class="project-card featured reveal">
         <div>
           <div class="project-num">001 — Featured</div>
-          <div class="project-title">FPGA Digital Logic Lab Suite</div>
-          <p class="project-desc">Designed and simulated a series of digital circuits on an FPGA using Verilog HDL. Work includes synchronous counters, JK flip-flop behavioral models, 7-segment decoders, LFSR sequences, SR/D latches, ring oscillators, and static hazard analysis. Verified all designs using Vivado waveform simulation.</p>
+          <h3 class="project-title">Self-Hosted DevOps Home Lab</h3>
+          <p class="project-desc">Built a Proxmox VE 8 server on a Dell OptiPlex, running Debian 13 VMs and a Docker stack: Gitea with Woodpecker CI pipelines, Prometheus + Grafana monitoring, and Nginx Proxy Manager with automatic TLS. Hardened with UFW, Fail2ban, and key-only SSH; since the ISP's CG-NAT rules out port forwarding, remote admin runs over a Tailscale (WireGuard) mesh.</p>
           <div class="project-tags">
-            <span class="project-tag">Verilog</span>
-            <span class="project-tag">FPGA</span>
-            <span class="project-tag">Vivado</span>
-            <span class="project-tag">Digital Logic</span>
-            <span class="project-tag">RTL Design</span>
+            <span class="project-tag">Proxmox VE</span>
+            <span class="project-tag">Docker</span>
+            <span class="project-tag">Debian</span>
+            <span class="project-tag">CI/CD</span>
+            <span class="project-tag">Prometheus / Grafana</span>
+            <span class="project-tag">Tailscale</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/aary25/Homelab" target="_blank" rel="noopener" class="btn-ghost">View on GitHub →</a>
           </div>
         </div>
         <div class="project-visual">
-          <svg width="240" height="160" viewBox="0 0 240 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Clock signal -->
-            <polyline class="circuit-line" points="10,50 30,50 30,30 60,30 60,50 90,50 90,30 120,30 120,50 150,50 150,30 180,30 180,50 210,50" stroke="#00b4d8" stroke-width="1.5" fill="none"/>
-            <!-- Q output -->
-            <polyline class="circuit-line" points="10,100 50,100 50,80 110,80 110,100 170,100 170,80 210,80" stroke="#0077b6" stroke-width="1.5" fill="none" style="animation-delay:0.5s"/>
+          <svg viewBox="0 0 240 150" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="'JetBrains Mono', monospace" role="img" aria-label="Home lab stack: Gitea and Woodpecker CI, Prometheus and Grafana, and Nginx Proxy Manager on Docker and Debian 13 VMs, hosted on Proxmox VE 8, with Tailscale for remote admin">
+            <!-- Stack layers -->
+            <path class="circuit-line" pathLength="200" d="M2 4h236v20H2z" stroke="#00b4d8" fill="#00b4d8" fill-opacity="0.04"/>
+            <path class="circuit-line" pathLength="200" d="M2 28h236v20H2z" stroke="#00b4d8" fill="#00b4d8" fill-opacity="0.04" style="animation-delay:0.65s"/>
+            <path class="circuit-line" pathLength="200" d="M2 52h236v20H2z" stroke="#00b4d8" fill="#00b4d8" fill-opacity="0.04" style="animation-delay:0.8s"/>
+            <path class="circuit-line" pathLength="200" d="M2 76h236v20H2z" stroke="#008cd6" fill="#008cd6" fill-opacity="0.06" style="animation-delay:0.95s"/>
+            <path class="circuit-line" pathLength="200" d="M2 100h236v20H2z" stroke="#008cd6" fill="#008cd6" fill-opacity="0.06" style="animation-delay:1.1s"/>
             <!-- Labels -->
-            <text x="4" y="53" font-family="monospace" font-size="8" fill="#5c6c96">CLK</text>
-            <text x="4" y="103" font-family="monospace" font-size="8" fill="#5c6c96">Q</text>
-            <!-- Dots -->
-            <circle cx="30" cy="30" r="3" fill="#00b4d8"/>
-            <circle cx="90" cy="30" r="3" fill="#00b4d8"/>
-            <circle cx="150" cy="30" r="3" fill="#00b4d8"/>
-            <circle cx="50" cy="80" r="3" fill="#0077b6"/>
-            <circle cx="110" cy="80" r="3" fill="#0077b6"/>
-            <circle cx="170" cy="80" r="3" fill="#0077b6"/>
-            <text x="80" y="150" font-family="monospace" font-size="8" fill="#5c6c96" text-anchor="middle">JK flip-flop waveform</text>
+            <g font-size="6.5" letter-spacing="0.6" fill="#8592b5">
+              <text x="10" y="16.3">CI/CD</text>
+              <text x="10" y="40.3">METRICS</text>
+              <text x="10" y="64.3">PROXY</text>
+              <text x="10" y="88.3">RUNTIME</text>
+              <text x="10" y="112.3">HOST</text>
+            </g>
+            <g font-size="8" fill="#e9f3f7">
+              <text x="60" y="16.8">Gitea → Woodpecker CI</text>
+              <text x="60" y="40.8">Prometheus → Grafana</text>
+              <text x="60" y="64.8">Nginx Proxy Manager · TLS</text>
+              <text x="60" y="88.8">Docker · Debian 13 VMs</text>
+              <text x="60" y="112.8">Proxmox VE 8 · Dell OptiPlex</text>
+            </g>
+            <!-- Remote access -->
+            <line x1="5" y1="132" x2="235" y2="132" stroke="#00b4d8" stroke-dasharray="3 4"/>
+            <circle cx="4" cy="132" r="2.5" fill="#00b4d8"/>
+            <circle cx="236" cy="132" r="2.5" fill="#00b4d8"/>
+            <text x="120" y="146" font-size="6.5" letter-spacing="0.4" fill="#8592b5" text-anchor="middle">TAILSCALE · WIREGUARD → REMOTE ADMIN THROUGH CG-NAT</text>
           </svg>
         </div>
       </div>
 
       <div class="project-card reveal">
         <div class="project-num">002</div>
-        <div class="project-title">Home Lab — Active Directory</div>
-        <p class="project-desc">Configured a self-hosted enterprise-grade lab environment running Windows Server with Active Directory, DNS, and DHCP on repurposed hardware. Used to practice sysadmin workflows and prepare for CompTIA / Azure certs.</p>
+        <h3 class="project-title">FPGA Digital Logic Lab Suite</h3>
+        <p class="project-desc">Designed and simulated a series of digital circuits on an FPGA using Verilog HDL. Work includes synchronous counters, JK flip-flop behavioral models, 7-segment decoders, LFSR sequences, SR/D latches, ring oscillators, and static hazard analysis. Verified all designs using Vivado waveform simulation.</p>
         <div class="project-tags">
-          <span class="project-tag">Windows Server</span>
-          <span class="project-tag">Active Directory</span>
-          <span class="project-tag">Networking</span>
-          <span class="project-tag">Linux</span>
+          <span class="project-tag">Verilog</span>
+          <span class="project-tag">FPGA</span>
+          <span class="project-tag">Vivado</span>
+          <span class="project-tag">Digital Logic</span>
+          <span class="project-tag">RTL Design</span>
         </div>
       </div>
 
       <div class="project-card reveal">
         <div class="project-num">003</div>
-        <div class="project-title">C++ Data Structures Library</div>
+        <h3 class="project-title">C++ Data Structures Library</h3>
         <p class="project-desc">Implemented core data structures (arrays, vectors, linked structures) and algorithms from scratch in C++. Practiced memory management, pass-by-reference, streams, and object-oriented design patterns.</p>
         <div class="project-tags">
           <span class="project-tag">C++</span>
@@ -971,7 +1100,7 @@
       <div class="exp-item reveal">
         <div class="exp-period">2024 — Present</div>
         <div>
-          <div class="exp-role">B.S. Computer Engineering</div>
+          <h3 class="exp-role">B.S. Computer Engineering</h3>
           <div class="exp-org">University of Kentucky · Lexington, KY</div>
           <div class="exp-detail">Coursework: Digital Logic Design (CPE 282), Discrete Math, C++ Programming.<br>Focus on hardware-software co-design, FPGA programming, and embedded systems.</div>
         </div>
@@ -980,7 +1109,7 @@
       <div class="exp-item reveal">
         <div class="exp-period">May 2026</div>
         <div>
-          <div class="exp-role">True Lean Certification</div>
+          <h3 class="exp-role">True Lean Certification</h3>
           <div class="exp-org">UK True Lean Systems · University of Kentucky</div>
           <div class="exp-detail">Completed a one-week immersive certification in True Lean™ methodology through UK's College of Engineering. Topics covered lean principles, waste identification, and process improvement frameworks grounded in the Toyota Production System.</div>
         </div>
@@ -989,16 +1118,16 @@
       <div class="exp-item reveal">
         <div class="exp-period">Ongoing</div>
         <div>
-          <div class="exp-role">Independent Study — Systems & Cloud</div>
+          <h3 class="exp-role">Independent Study — Systems & Cloud</h3>
           <div class="exp-org">Self-directed · Home Lab</div>
-          <div class="exp-detail">Building and operating a home lab with bare-metal Linux (Linux Mint 22.3) and Windows Server for Active Directory. Pursuing CompTIA and Microsoft Azure certifications.</div>
+          <div class="exp-detail">Building and operating a Proxmox VE home lab (Debian 13 VMs, Docker, self-hosted CI/CD, Prometheus/Grafana monitoring), plus Windows Server and Active Directory labs. Pursuing CompTIA and Microsoft Azure certifications.</div>
         </div>
         <div class="exp-badge">Active</div>
       </div>
       <div class="exp-item reveal">
         <div class="exp-period">2025</div>
         <div>
-          <div class="exp-role">Hardware Prototyping Projects</div>
+          <h3 class="exp-role">Hardware Prototyping Projects</h3>
           <div class="exp-org">Personal · Arduino / FPGA</div>
           <div class="exp-detail">Designed oscilloscope hardware with Arduino. Explored feasibility of drone control systems. Lab work on timing phenomena: static hazards, ring oscillators, and SR latches.</div>
         </div>
@@ -1022,11 +1151,11 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           Email Me
         </a>
-        <a href="https://github.com/aary25" class="contact-link" target="_blank">
+        <a href="https://github.com/aary25" class="contact-link" target="_blank" rel="noopener">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
           GitHub
         </a>
-        <a href="https://www.linkedin.com/in/aarypatel25" class="contact-link" target="_blank">
+        <a href="https://www.linkedin.com/in/aarypatel25" class="contact-link" target="_blank" rel="noopener">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
           LinkedIn
         </a>
@@ -1035,54 +1164,92 @@
   </div>
 </section>
 
+</main>
+
 <footer>
-  <span>© 2026 Aary — All rights reserved</span>
+  <span>© 2026 Aary Patel — All rights reserved</span>
   <span>Computer Engineering · University of Kentucky</span>
 </footer>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx - 5 + 'px';
-    cursor.style.top = my - 5 + 'px';
-  });
-
-  function animateRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx - 18 + 'px';
-    ring.style.top = ry - 18 + 'px';
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'scale(2.5)';
-      ring.style.transform = 'scale(1.4)';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'scale(1)';
-      ring.style.transform = 'scale(1)';
-    });
-  });
-
-  // Scroll reveal
+  // Scroll reveal (runs first so content can't stay hidden if a later feature fails)
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver(entries => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
         setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.1 });
 
   reveals.forEach(el => observer.observe(el));
+
+  // Mobile menu
+  const navToggle = document.querySelector('.nav-toggle');
+  const navLinks = document.getElementById('nav-links');
+
+  function setMenu(open) {
+    navLinks.classList.toggle('open', open);
+    navToggle.setAttribute('aria-expanded', open);
+    navToggle.textContent = open ? 'Close' : 'Menu';
+  }
+
+  navToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('open')));
+  navLinks.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+      setMenu(false);
+      navToggle.focus();
+    }
+  });
+
+  // Custom cursor: mouse/trackpad only, and off when reduced motion is requested
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (finePointer && !reduceMotion) {
+    const root = document.documentElement;
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0, seen = false, ringMoving = false;
+
+    root.classList.add('has-cursor');
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx - 5 + 'px';
+      cursor.style.top = my - 5 + 'px';
+      if (!seen) { rx = mx; ry = my; seen = true; }
+      root.classList.add('cursor-visible');
+      if (!ringMoving) { ringMoving = true; requestAnimationFrame(animateRing); }
+    });
+
+    // hide while the mouse is outside the window
+    document.addEventListener('mouseout', e => {
+      if (!e.relatedTarget) root.classList.remove('cursor-visible');
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx - 18 + 'px';
+      ring.style.top = ry - 18 + 'px';
+      ringMoving = Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1;
+      if (ringMoving) requestAnimationFrame(animateRing);
+    }
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'scale(2.5)';
+        ring.style.transform = 'scale(1.4)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'scale(1)';
+        ring.style.transform = 'scale(1)';
+      });
+    });
+  }
 </script>
 </body>
 </html>
