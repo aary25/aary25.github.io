@@ -10,6 +10,7 @@ A single-page static site in one file, `index.html`. HTML, CSS, and JavaScript w
 - Scroll-reveal animations using `IntersectionObserver`
 - Respects `prefers-reduced-motion`
 - Open Graph and Twitter card metadata (`assets/og-image.png`)
+- Mid-century modern theme, after dark: warm reds and walnut browns with soft pools of light, Jost (a Futura-style geometric typeface), and a hand-built SVG collage of a chip and logic gates that animates in once on load
 
 ## Run it locally
 
